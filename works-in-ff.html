@@ -1,0 +1,37 @@
+<input type="file" id="files" name="files[]" multiple />
+<output id="outlist"></output>
+<script type="text/javascript" src="scripts/ucsv-1.0.2.js"></script>
+<script type="text/javascript" src="scripts/test.js"></script>
+
+<script type="text/javascript">
+  function handleFileSelect(evt) {
+    var files = evt.target.files; // FileList object
+
+    // files is a FileList of File objects. List some properties.
+    //var output = [];
+    var f = files[0];
+    var reader = new FileReader();
+
+    reader.onload = function(e) { //doesn't work?
+      alert();
+      document.getElementById('outlist').innerHTML = e.target.result;
+      //var csvarray = CSV.csvtoarray(csvstring);
+      //document.getElementById('outlist').innerHTML = "hey girl";//csvarray[0].toString();
+    }
+    reader.readAsText(f);
+
+    alert(f.name);
+    //var csvArray = 
+    //document.getElementById('outlist').innerHTML = reader.result;
+    var csvArray = CSV.csvToArray(reader.result);
+    alert(csvArray[0]);
+
+    var output = NaiveClusterer.findDistances(csvArray);
+    //alert(output[0];
+    document.getElementById('outlist').innerHTML = CSV.arrayToCsv(output);
+  }
+
+ document.getElementById('files').addEventListener('change', handleFileSelect, false);
+
+</script>
+

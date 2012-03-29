@@ -1,0 +1,47 @@
+<html>
+  <head>
+    <script type="text/javascript" src="scripts/ucsv-1.0.2.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>    
+    <script type="text/coffeescript" src="scripts/test.coffee"></script>
+    <script type="text/coffeescript" src="scripts/app.coffee"></script>
+
+    <script type="text/javascript" src="scripts/coffee-script.js"></script>
+    <script type="text/javascript" src="scripts/flot/jquery.flot.js"></script>
+    <script type="text/javascript" src="scripts/d3/d3.v2.js"></script>
+    <style type="text/css">
+
+      path.link {
+        fill: none;
+        stroke: #666;
+        stroke-width: 1.5px;
+      }
+
+      text {
+        font: 10px sans-serif;
+        pointer-events: none;
+      }
+
+      text.shadow {
+        stroke: #fff;
+        stroke-width: 3px;
+        stroke-opacity: .8;
+      }
+
+    </style>
+  </head>
+    
+
+<h1>Upload a CSV.  First line must be column names. </h1>
+
+<input type="file" id="files" name="files[]" multiple />
+</br>
+<div id="trackerChart"></div>
+<output id="coltitles"></output>
+</br>
+<select id="col1"></select>
+<select id="col2"></select>
+</br>
+<button type="button" id="plotButton">Make 2D Plot</button>
+<div id="clusterPlot" style="width:600px;height:600px"></div>
+<div id="rawout"></div>
+

@@ -1,0 +1,6 @@
+README for rinkydink csv clustering webtool:
+  upload a csv to be clustered whose lines conform to: <real>, . . ., <0/1> where 1 means the line is a centroid and 0 that it's not.
+  select two columns of data by name using drop down lists
+  output is the graph of the two columns colored by cluster
+
+  NOTE: doesn't currently work on comma-terminated CSVs (because of csv parsing library)

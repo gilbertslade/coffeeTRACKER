@@ -1,0 +1,6 @@
+three thoughts to graph clusters:
+  1)  plot centroids around some shape (circle?) using relative distance from each other.
+      plot other points using absolute distance from all centroids and color by cluster
+  2)  simple network.  connect points to their centroids with solid lines, dotted lines to next two proximate.
+      use physics/spring to lay network out.
+  3)  after clustering, user chooses which two variables are most important, just graph those.
