@@ -38,7 +38,7 @@ class NaiveClusterer
 
   #tracker: takes clustered lists, returns a list of objects
   #tracker takes findFirstClusters, returns list of lists matching clusters to clusters
-  tracker: (csv, threshold = 15) ->
+  tracker: (csv) ->
     clusterList = @findFirstClusters(csv)
     centroids = @getCentroids(csv)
     list = []
@@ -47,7 +47,7 @@ class NaiveClusterer
     list[clusterList[j-1][1]][clusterList[j][1]]++ for j in [1...clusterList.length]
     names = []
     names.push c[c.length - 1] for c in centroids
-    return @makeJSON(list, names, clusterList[0], clusterList[clusterList.length - 1], threshold)
+    return @makeJSON(list, names, clusterList[0], clusterList[clusterList.length - 1])
 
   makeJSON: (adjList, names, first, last, threshold = 15) ->
     json = { 'nodes':[], 'links':[] }
@@ -57,7 +57,8 @@ class NaiveClusterer
 
     i = -1
     while i++ < adjList.length - 1
-      json.links.push({'source':i, 'target':j, 'value':adjList[i][j]}) for j in [0 ... adjList[i].length] when adjList[i][j] > threshold and i isnt j
+      json.links.push({'source':i, 'target':j, 'value':adjList[i][j]}) for j in [0 ... adjList[i].length] #when adjList[i][j] > threshold and i isnt j
+      #move checks into makeForceChart to make it interactive
 
     json.links.push({'source':json.nodes[json.nodes.length - 2], 'target':first[first.length - 1], 'value':1})
     json.links.push({'source':last[last.length - 1], 'target':json.nodes[json.nodes.length - 1], 'value':1})
@@ -89,8 +90,8 @@ handleFileSelect = (evt) ->
     fc = c.findFirstClusters(csvArray)
 
     #document.getElementById('rawout').innerHTML = c.tracker(csvArray)
-    threshold = 10
-    json = c.tracker(csvArray, threshold)
+    threshold = 11
+    json = c.tracker(csvArray)
     console.log(json)
     makeForceChart(json, threshold)
 
@@ -110,7 +111,7 @@ handleFileSelect = (evt) ->
   reader.readAsText f
 
 
-  makeForceChart = (json, threshold = 15) ->
+  makeForceChart = (json, threshold = 15, drawEdgesToSelf = false) ->
     vis = d3.select('#trackerChart').append('svg:svg')
       .attr('width', 600)
       .attr('height', 600)
@@ -140,16 +141,18 @@ handleFileSelect = (evt) ->
       .size([600, 600])
       .start()
     
+    edges = []
+    edges.push edge for edge in json.links when ((edge.source isnt edge.target) and (edge.value > threshold)) or (edge.source is START or edge.target is END)
+    console.log(edges)
     path = vis.append('svg:g').selectAll('path')
-        .data(json.links)
+        .data(edges)
       .enter().append('svg:path')
         #.attr('class', (d) -> 'url(#' + d.val + ')')
         .attr('x', fixPosX)
         .attr('y', fixPosY)
         .attr('fill', 'none')
         .attr('stroke', '#666')
-        .attr('stroke-width', (d) -> return d.value - threshold)
-        .attr('label', (d) -> d.value)
+        .attr('stroke-width', (d) -> return Math.sqrt(d.value - threshold))
         .attr('marker-end', 'url(#arrow)')
 
     #link = vis.selectAll('line.link')
@@ -187,6 +190,17 @@ handleFileSelect = (evt) ->
       .style("fill", (d) -> fill(d.group) )
       .call(force.drag)
       .attr('transform', (d) -> return 'translate(' + 0 + ',' + -30 + ')' )
+
+    pathLabel = vis.selectAll('text')
+      .data(edges, (d) -> d.value)
+      .enter()
+      .insert('text')
+      .text((d) -> d.value)
+      .attr('x', edgeLabelX)
+      .attr('y', edgeLabelY)
+      .attr('text-anchor', 'middle')
+      .attr('fill', 'none')
+      .attr('stroke', '#666')
     
     
     node.append('title')
@@ -216,6 +230,9 @@ handleFileSelect = (evt) ->
 
       nodeLabel.attr("x", fixPosX )
         .attr("y", fixPosY )
+
+      pathLabel.attr('x', edgeLabelX)
+        .attr('y', edgeLabelY)
       
   fixPosX = (d) ->
     if d is START
@@ -233,6 +250,13 @@ handleFileSelect = (evt) ->
     else
       return d.y + offset
 
+  edgeLabelX = (d) ->
+    return d.source.x - d.target.x if d.source.x > d.target.x
+    return d.target.x - d.source.x
+
+  edgeLabelY = (d) ->
+    return d.source.y - d.target.y if d.source.y > d.target.y
+    return d.target.y - d.source.y
 
 
 zip = (arr1, arr2) ->
