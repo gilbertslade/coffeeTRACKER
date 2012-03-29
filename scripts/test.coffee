@@ -231,8 +231,8 @@ handleFileSelect = (evt) ->
       nodeLabel.attr("x", fixPosX )
         .attr("y", fixPosY )
 
-      pathLabel.attr('x', edgeLabelX)
-        .attr('y', edgeLabelY)
+      pathLabel.attr('x', edgeLabelX)# (d) -> fixPosX d.source)
+        .attr('y', edgeLabelY)# (d) -> fixPosY d.source)
       
   fixPosX = (d) ->
     if d is START
@@ -251,13 +251,22 @@ handleFileSelect = (evt) ->
       return d.y + offset
 
   edgeLabelX = (d) ->
-    return d.source.x - d.target.x if d.source.x > d.target.x
-    return d.target.x - d.source.x
+    if fixPosX(d.source) > fixPosX(d.target) 
+      offset = 7
+    lse 
+      offset =-7
+    maxX = Math.max(fixPosX(d.source), fixPosX(d.target))
+    minX = Math.min(fixPosX(d.source), fixPosX(d.target))
+    return (maxX - minX) /2.0 + minX
 
   edgeLabelY = (d) ->
-    return d.source.y - d.target.y if d.source.y > d.target.y
-    return d.target.y - d.source.y
-
+    if fixPosY(d.source) > fixPosY(d.target) 
+      offset = 7
+    else 
+      offset =-7
+    maxY = Math.max(fixPosY(d.source), fixPosY(d.target))
+    minY = Math.min(fixPosY(d.source), fixPosY(d.target))
+    return (maxY - minY) /2.0 + minY + offset
 
 zip = (arr1, arr2) ->
   basic_zip = (el1, el2) -> [el1, el2]
