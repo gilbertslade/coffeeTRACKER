@@ -3,6 +3,9 @@
     <script type="text/javascript" src="scripts/ucsv-1.0.2.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>    
     <script type="text/coffeescript" src="scripts/test.coffee"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+      <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+    <script type="text/coffeescript" src="scripts/forceChart.coffee"></script>
     <script type="text/coffeescript" src="scripts/app.coffee"></script>
 
     <script type="text/javascript" src="scripts/coffee-script.js"></script>
@@ -31,10 +34,15 @@
   </head>
     
 
-<h1>Upload a CSV.  First line must be column names. </h1>
+<h1>Upload a CSV or Paste It</h1>
+<h2>First row must be variable names, last column must be centroid names</h2>
 
 <input type="file" id="files" name="files[]" multiple />
 </br>
+
+<textarea id="csvText"></textarea>
+<button type='button' id='submitTextButton'>Parse CSV</button>
+<div id='thresholdSlider'></div>
 <div id="trackerChart"></div>
 <output id="coltitles"></output>
 </br>
